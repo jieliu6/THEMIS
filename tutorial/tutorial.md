@@ -39,6 +39,7 @@ Please refer to doc/doc.md for documentation for these files.
 * `initDpmfs.txt`   initial values for Gaussian mixtures
 * `init_hmm_factorialModel.params`   initial values for other parameters
 * `params.notrain`   which parameters are not to be estimated. If a parameter is specified in this file, it will be fixed at its initial value rather than being estimated
+* `em_covar.txt`  current estimate of the transition parameters \sigma^2_{G,j} and \sigma^2_{Z,j}. The first |G| rows are for \sigma^2_{G,j} and the next |Z| rows are for \sigma^2_{Z,j} (usually initialized as 100).
 
 As a part of the training/testing script, some java code is called to generate files which define the Gaussian distributions used by THEMIS. 
 Please refer to doc/doc.md for documentation for these files.
