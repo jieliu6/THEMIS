@@ -34,7 +34,7 @@ conditionalparents : nil using DenseCPT("pG")
   }
 ~~~~
 
-* Virtual evidence variable for transition probability of G  
+* Virtual evidence variable for transition probability of G. The following example is for |G|=5.
  
 ~~~~  
 variable : LOG_DIST_G {
@@ -104,7 +104,7 @@ conditionalparents : nil using DenseCPT("pZ")
   }  
 ~~~~
 
-* Virtual evidence variable for transition probability of Z.
+* Virtual evidence variable for transition probability of Z. The following example is for |Z|=5.
 
 ~~~~
 variable : LOG_DIST_Z {
@@ -145,7 +145,7 @@ conditionalparents : nil using DenseCPT("internal:UnityScore");
   }
 ~~~~
 
-* Observed variable: Allelic ratio in first biopsy
+* Observed variable: Allelic ratio in first biopsy. The first five scenarios correspond to the five clones (Z=0,...,4) and D=0. The next five scenarios correspond to the five clones (Z=0,...,4) and D=1.
 
 ~~~~ 
 variable : A1 {
@@ -164,7 +164,7 @@ conditionalparents : G(0),P1_2(0) using mixture collection("pA1_given_G_P_D0") m
   }
 ~~~~
 
-* Observed variable: log tumor-normal read depth ratio in first biopsy
+* Observed variable: log tumor-normal read depth ratio in first biopsy. The five scenarios correspond to the five clones (Z=0,...,4).
 
 ~~~~  
 variable : L1 {
@@ -225,12 +225,13 @@ z_diagCheck
 ~~~~
 
 # Other model specification files
-* constants.inc  // constant used in the structure file and master file
+* constants.inc  // constants used in the structure file and master file
 * initCovars.txt  // initial values for covariance in the Gaussians
 * initDpmfs.txt  // initial values for Gaussian mixtures
 * init_hmm_factorialModel.params  // initial values for other parameters
 * params.notrain  // which parameters are not to be estimated. If a parameter is specified in this file, it will be fixed at its initial value rather than being estimated
-
+* em_covar.txt // current estimate of the transition parameters \sigma^2_{G,j} and \sigma^2_{Z,j}. The first |G| rows are for \sigma^2_{G,j} and the next |Z| rows are for \sigma^2_{Z,j} (usually initialized as 100).
+* em_training_data.txt // the directory and file name of the input data for GMTK
 
 
 

@@ -2,12 +2,14 @@
 
 The Graphical Models Toolkit (GMTK) is an open source, publicly available toolkit for rapidly prototyping statistical models using dynamic graphical models (DGMs) and dynamic Bayesian networks (DBNs). 
 It can be download at its [website](http://melodi.ee.washington.edu/gmtk/). Please follow its instruction to download and install.
+Please note that GMTK is for Linux only. 
+Therefore, our THEMIS model can only be run on a Linux machine.
 
 ## Step 2. follow preprocessing steps and prepare input file 
 
 We assume that bam files of the biopsies (and the corresponding index files) are available for analysis. 
 Nine preprocessing steps are needed in order to generate input files for THEMIS.
-One example data file is combinedData_01-1-B2_01-2-B2_01-4-B3.txt.
+One example data file is /data/combinedData_01-1-B2_01-2-B2_01-4-B3.txt.
 
 1. Identify germline heterozygous sites
 
@@ -40,6 +42,7 @@ Please refer to doc/doc.md for documentation for these files.
 * `init_hmm_factorialModel.params`   initial values for other parameters
 * `params.notrain`   which parameters are not to be estimated. If a parameter is specified in this file, it will be fixed at its initial value rather than being estimated
 * `em_covar.txt`  current estimate of the transition parameters \sigma^2_{G,j} and \sigma^2_{Z,j}. The first |G| rows are for \sigma^2_{G,j} and the next |Z| rows are for \sigma^2_{Z,j} (usually initialized as 100).
+* `em_training_data.txt`  the directory and file name of the input data for GMTK. Note that java code updateOffDiagonalElementsForEMUntieVariances.class takes combinedData_01-1-B2_01-2-B2_01-4-B3.txt and em_covar.txt as input and writes to data into the data file specified by em_training_data.txt.
 
 As a part of the training/testing script, some java code is called to generate files which define the Gaussian distributions used by THEMIS. 
 Please refer to doc/doc.md for documentation for these files.
