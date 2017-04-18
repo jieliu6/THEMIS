@@ -18,19 +18,19 @@ public class generatingGausianMeansAL5Copies {
     private double [] c_para ;
     
     private String gaussianMeanFileNameA_D0 = "meansA_D0.txt" ;
-    private String mcFileNameA_D0 = "mcA_D0.txt" ;
-    private String mixtureFileNameA_D0 = "mixtureA_D0.txt" ;
-    private String collectionFileNameA_D0 = "collectionA_D0.txt" ;
+    private String mcFileNameA_D0 ;
+    private String mixtureFileNameA_D0 ;
+    private String collectionFileNameA_D0 ;
     
     private String gaussianMeanFileNameA_D1 = "meansA_D1.txt" ;
-    private String mcFileNameA_D1 = "mcA_D1.txt" ;
-    private String mixtureFileNameA_D1 = "mixtureA_D1.txt" ;
-    private String collectionFileNameA_D1 = "collectionA_D1.txt" ;
+    private String mcFileNameA_D1 ;
+    private String mixtureFileNameA_D1 ;
+    private String collectionFileNameA_D1 ;
     
-    private String gaussianMeanFileNameL = "meansL.txt" ;
-    private String mcFileNameL = "mcL.txt" ;
-    private String mixtureFileNameL = "mixtureL.txt" ;
-    private String collectionFileNameL = "collectionL.txt" ;
+    private String gaussianMeanFileNameL ;
+    private String mcFileNameL ;
+    private String mixtureFileNameL ;
+    private String collectionFileNameL ;
         
     public generatingGausianMeansAL5Copies (int num1, int num2, double pre, int num3, double [] cvalues) {
     	  numberOfGenotypes = num1 ;

@@ -1,0 +1,189 @@
+% author: Jie Liu
+% contact: liu6@uw.edu
+%Master file, there are no nontrainable parameters for the trigram model
+
+#include "constants.inc"
+
+% DT_IN_FILE dts.txt ascii
+DT_IN_FILE inline 5
+0
+dtA_given_G_P
+2
+  -1 { p0 * P_CARD + p1  }
+  
+1
+dtL_given_G_P
+2
+  -1 { p0 * P_CARD + p1  }  
+
+2
+dt_Z_D
+2
+  -1 { p0 + Z_CARD * p1 }
+
+3
+g_diagCheck
+3 
+0 2 0 default
+  -1 { 0 }
+  -1 { ( p1 == p2 ) ? (p2 + G_CARD + 1) : (p1+1) }
+
+4
+z_diagCheck
+3 
+0 2 0 default
+  -1 { 0 }
+  -1 { ( p1 == p2 ) ? (p2 + Z_CARD + 1) : (p1+1) }
+
+
+DETERMINISTIC_CPT_IN_FILE inline 1
+%CPT_num
+%CPT_name
+%num_parents
+%parent_cardinalities
+%self_cardinality
+%dt_mapping_name
+0
+pP_chunk_cpt
+1
+P_CARD
+P_CARD
+internal:copyParent
+
+COVAR_IN_FILE initCovars.txt ascii
+
+DPMF_IN_FILE initDpmfs.txt ascii
+
+%%%%%%%%%%%%% A, D = 0
+MEAN_IN_FILE meansA_D0.txt ascii
+
+MC_IN_FILE mcA1_D0.txt ascii
+
+MX_IN_FILE mixtureA1_D0.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionA1_D0.txt ascii
+
+MC_IN_FILE mcA2_D0.txt ascii
+
+MX_IN_FILE mixtureA2_D0.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionA2_D0.txt ascii
+
+MC_IN_FILE mcA3_D0.txt ascii
+
+MX_IN_FILE mixtureA3_D0.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionA3_D0.txt ascii
+
+%%%%%%%%%%%%% A, D = 1
+MEAN_IN_FILE meansA_D1.txt ascii
+
+MC_IN_FILE mcA1_D1.txt ascii
+
+MX_IN_FILE mixtureA1_D1.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionA1_D1.txt ascii
+
+MC_IN_FILE mcA2_D1.txt ascii
+
+MX_IN_FILE mixtureA2_D1.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionA2_D1.txt ascii
+
+MC_IN_FILE mcA3_D1.txt ascii
+
+MX_IN_FILE mixtureA3_D1.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionA3_D1.txt ascii
+
+%%%%%%%%%%%%% L
+MEAN_IN_FILE meansL1.txt ascii
+
+MC_IN_FILE mcL1.txt ascii
+
+MX_IN_FILE mixtureL1.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionL1.txt ascii
+
+MEAN_IN_FILE meansL2.txt ascii
+
+MC_IN_FILE mcL2.txt ascii
+
+MX_IN_FILE mixtureL2.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionL2.txt ascii
+
+MEAN_IN_FILE meansL3.txt ascii
+
+MC_IN_FILE mcL3.txt ascii
+
+MX_IN_FILE mixtureL3.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionL3.txt ascii
+
+%%%%%%%%%%%%% A, D = 0, no CNA events
+MEAN_IN_FILE meansA_D0_noCNAs.txt ascii
+
+MC_IN_FILE mcA1_D0_noCNAs.txt ascii
+
+MX_IN_FILE mixtureA1_D0_noCNAs.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionA1_D0_noCNAs.txt ascii
+
+MC_IN_FILE mcA2_D0_noCNAs.txt ascii
+
+MX_IN_FILE mixtureA2_D0_noCNAs.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionA2_D0_noCNAs.txt ascii
+
+MC_IN_FILE mcA3_D0_noCNAs.txt ascii
+
+MX_IN_FILE mixtureA3_D0_noCNAs.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionA3_D0_noCNAs.txt ascii
+
+%%%%%%%%%%%%% A, D = 1, no CNA events
+MEAN_IN_FILE meansA_D1_noCNAs.txt ascii
+
+MC_IN_FILE mcA1_D1_noCNAs.txt ascii
+
+MX_IN_FILE mixtureA1_D1_noCNAs.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionA1_D1_noCNAs.txt ascii
+
+MC_IN_FILE mcA2_D1_noCNAs.txt ascii
+
+MX_IN_FILE mixtureA2_D1_noCNAs.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionA2_D1_noCNAs.txt ascii
+
+MC_IN_FILE mcA3_D1_noCNAs.txt ascii
+
+MX_IN_FILE mixtureA3_D1_noCNAs.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionA3_D1_noCNAs.txt ascii
+
+%%%%%%%%%%%%% L , no CNA events
+MEAN_IN_FILE meansL1_noCNAs.txt ascii
+
+MC_IN_FILE mcL1_noCNAs.txt ascii
+
+MX_IN_FILE mixtureL1_noCNAs.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionL1_noCNAs.txt ascii
+
+MEAN_IN_FILE meansL2_noCNAs.txt ascii
+
+MC_IN_FILE mcL2_noCNAs.txt ascii
+
+MX_IN_FILE mixtureL2_noCNAs.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionL2_noCNAs.txt ascii
+
+MEAN_IN_FILE meansL3_noCNAs.txt ascii
+
+MC_IN_FILE mcL3_noCNAs.txt ascii
+
+MX_IN_FILE mixtureL3_noCNAs.txt ascii
+
+NAME_COLLECTION_IN_FILE collectionL3_noCNAs.txt ascii
