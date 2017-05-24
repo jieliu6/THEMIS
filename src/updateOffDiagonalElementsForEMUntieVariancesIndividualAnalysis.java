@@ -7,13 +7,9 @@ import java.io.*;
 */
 
 public class updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis {
-	  private String inputDirectoryName ;
-	  private String outputDirectoryName ;
-	  private String inputSiteInfoFileName ;
 	  private String inputDataFileName ;
 	  private String outputFileName ;
 	  private String tempParameterFileName ;
-	  private String informationFileName ;
 	  
 	  private int biopsyIndex ;
 	  private int AVariableIndex ;
@@ -24,29 +20,29 @@ public class updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis {
     private String [] chr ;
     private int [] bp ;
     
-    private int gNum = 12 ;
-    private int zNum = 2 ;
+    private int gNum ;
+    private int zNum ;
+    private int biopsyNum ;
     private double [] g_var_est = new double [gNum] ;
     private double [] z_var_est = new double [zNum] ;
         
-    public updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis (int biopsyIndexInput) throws java.io.IOException {
-    	  tempParameterFileName = "./em_covar.txt" ;
-    	  
+    public updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis (String tempf, String dataf, String outf, int gn, int zn, int bn, int biopsyIndexInput) {
+    	  gNum = gn ;
+    	  zNum = zn ;
+    	  biopsyNum = bn ;    	  
+    	  tempParameterFileName = tempf ;
+    	  inputDataFileName = dataf ;
+    	  outputFileName = outf ;
     	  biopsyIndex = biopsyIndexInput ;
     	  AVariableIndex = biopsyIndex + 2 ;
-        LVariableIndex = biopsyIndex + 5 ;
-        DVariableIndex = 8 ;
-    	  
-    	  String [] biopsyTags = new String [3] ;
-    	  biopsyTags [0] = "01-1-B2" ; 
-    	  biopsyTags [1] = "01-2-B2" ; 
-    	  biopsyTags [2] = "01-4-B3" ; 
-    	  inputDataFileName = "/net/noble/vol1/home/liu6/extendSpace/proj/2015itomic/data/itomic/subject1/bams/combinedData_01-1-B2_01-2-B2_01-4-B3.txt" ;
-    	  outputFileName = "trainWithLogSiteDistance_"+biopsyTags[biopsyIndex]+".txt" ;
+        LVariableIndex = biopsyIndex + 2 + biopsyNum*1 ;
+        DVariableIndex = 2 + biopsyNum*2 ;
+        g_var_est = new double [gNum] ;
+        z_var_est = new double [zNum] ;
     }
         
     public void getCurrentEstimatedParameters () throws java.io.IOException {
-        RandomAccessFile accessFile = new RandomAccessFile (tempParameterFileName, "r") ; 
+    	  RandomAccessFile accessFile = new RandomAccessFile (tempParameterFileName, "r") ; 
         for (int i = 0 ; i < gNum ; i ++ ) {
             Double g_var_Dou = new Double (accessFile.readLine()) ;
             g_var_est [i] = g_var_Dou.doubleValue () ;
@@ -136,12 +132,6 @@ public class updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis {
         output.close () ;
     }
     
-    public double getStdNormalPDF (double x) {
-        double pdf = 0.0 ;
-        pdf = (1.0/(Math.sqrt(2*Math.PI)))*Math.pow(Math.E, (-(x)*(x))/(2.0)) ;
-        return pdf ;
-    }
-    
     public double getNormalPDF (double x, double mu, double sigma2) {
         double pdf = 0.0 ;
         pdf = (1.0/(Math.sqrt(2*Math.PI*sigma2)))*Math.pow(Math.E, (-(x-mu)*(x-mu))/(2.0*sigma2)) ;
@@ -155,12 +145,15 @@ public class updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis {
     }
     
     public static void main(String args[]) throws java.io.IOException {    	  
-        if (args.length != 1) {
-            System.err.println("Usage:  java updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis biopsyIndex"); 
+        if (args.length != 7) {
+            System.err.println("Usage:  java updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis tempParaFileName dataFileName tempDataFileName genotypeNum zNum biopsyNum biopsyIndex"); 
             System.exit(-1); 
         }
-        Integer biopsyIndexInt = new Integer (args[0]) ;
-        updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis my = new updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis (biopsyIndexInt.intValue()) ;
+        Integer genotypeNumInt = new Integer (args[3]) ;
+        Integer zNumInt = new Integer (args[4]) ;
+        Integer biopsyNumInt = new Integer (args[5]) ;
+        Integer biopsyIndexInt = new Integer (args[6]) ;
+        updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis my = new updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis (args[0], args[1], args[2], genotypeNumInt.intValue(), zNumInt.intValue(), biopsyNumInt.intValue(), biopsyIndexInt.intValue()) ;
         my.getCurrentEstimatedParameters () ;
         my.readInPositionInfo () ;
         my.printDataFiles () ;

@@ -1,4 +1,4 @@
-9
+10
 0
 covarA1_D0 1 1.0
 1
@@ -17,3 +17,5 @@ covarA3_D0 1 1.0
 covarA3_D1 1 1.0
 8
 covarL3 1 1.0
+9
+covarA_D1_noEvent 1 1E-10

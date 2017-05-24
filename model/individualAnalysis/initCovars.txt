@@ -1,7 +1,7 @@
 3
 0
-covarA_D0 1 1.0
+covarA1_D0 1 1.0
 1
-covarA_D1 1 1.0
+covarA1_D1 1 1.0
 2
-covarL 1 1.0
+covarL1 1 1.0

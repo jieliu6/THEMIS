@@ -31,8 +31,11 @@ public class generatingGausianMeansAL5Copies {
     private String mcFileNameL ;
     private String mixtureFileNameL ;
     private String collectionFileNameL ;
+    
+    private String modelDirectory ;
         
-    public generatingGausianMeansAL5Copies (int num1, int num2, double pre, int num3, double [] cvalues) {
+    public generatingGausianMeansAL5Copies (String dir, int num1, int num2, double pre, int num3, double [] cvalues) {
+    	  modelDirectory = dir ;
     	  numberOfGenotypes = num1 ;
     	  numberOfPrevalenceLevels = num2 ;
     	  numberOfBiopsies = num3 ;
@@ -45,7 +48,7 @@ public class generatingGausianMeansAL5Copies {
     }
     
     public void generatingGaussianMeanFileA_D0 () throws java.io.IOException {
-        PrintStream output = new PrintStream(new FileOutputStream(gaussianMeanFileNameA_D0)) ;
+        PrintStream output = new PrintStream(new FileOutputStream(modelDirectory + "/" + gaussianMeanFileNameA_D0)) ;
         output.println (totalNum+"") ;
         int counter = 0 ;
     	  for (int i = 0 ; i < numberOfPrevalenceLevels ; i ++ ) {  // for genotype --
@@ -126,7 +129,7 @@ public class generatingGausianMeansAL5Copies {
     	  for (int k = 0 ; k < numberOfBiopsies ; k ++ ) {
     	    	String biopsyLabel = k+1 + "" ;
     	    	mcFileNameA_D0 = "mcA"+biopsyLabel+"_D0.txt" ;
-    	      PrintStream output = new PrintStream(new FileOutputStream(mcFileNameA_D0)) ;
+    	      PrintStream output = new PrintStream(new FileOutputStream(modelDirectory + "/" + mcFileNameA_D0)) ;
     	      output.println (totalNum+"") ;
             for (int i = 0 ; i < totalNum ; i ++ ) {
                 output.println (i + " 1 0 gcA"+biopsyLabel+"_D0_" + i + " meanA_D0_" +i + " covarA"+biopsyLabel+"_D0") ;
@@ -139,7 +142,7 @@ public class generatingGausianMeansAL5Copies {
     	  for (int k = 0 ; k < numberOfBiopsies ; k ++ ) {
     	    	String biopsyLabel = k+1 + "" ;
     	    	mixtureFileNameA_D0 = "mixtureA"+biopsyLabel+"_D0.txt" ;
-    	      PrintStream output = new PrintStream(new FileOutputStream(mixtureFileNameA_D0)) ;
+    	      PrintStream output = new PrintStream(new FileOutputStream(modelDirectory + "/" + mixtureFileNameA_D0)) ;
     	      output.println (totalNum+"") ;
             for (int i = 0 ; i < totalNum ; i ++ ) {
                 output.println (i + " 1 mixtureA"+biopsyLabel+"_D0_"+i+" 1 unityDPMF gcA"+biopsyLabel+"_D0_" + i) ;
@@ -152,7 +155,7 @@ public class generatingGausianMeansAL5Copies {
     	  for (int k = 0 ; k < numberOfBiopsies ; k ++ ) {
     	    	String biopsyLabel = k+1 + "" ;
     	    	collectionFileNameA_D0 = "collectionA"+biopsyLabel+"_D0.txt" ;
-    	      PrintStream output = new PrintStream(new FileOutputStream(collectionFileNameA_D0)) ;
+    	      PrintStream output = new PrintStream(new FileOutputStream(modelDirectory + "/" + collectionFileNameA_D0)) ;
     	      output.println ("1             ") ;
     	      output.println ("0             ") ;
     	      output.println ("pA"+biopsyLabel+"_given_G_P_D0") ;
@@ -165,7 +168,7 @@ public class generatingGausianMeansAL5Copies {
     }
     
     public void generatingGaussianMeanFileA_D1 () throws java.io.IOException {
-        PrintStream output = new PrintStream(new FileOutputStream(gaussianMeanFileNameA_D1)) ;
+        PrintStream output = new PrintStream(new FileOutputStream(modelDirectory + "/" + gaussianMeanFileNameA_D1)) ;
         int overall = totalNum + numberOfPrevalenceLevels*4 ; // need to change
     	  output.println (overall+"") ; 
         int counter = 0 ;
@@ -283,7 +286,7 @@ public class generatingGausianMeansAL5Copies {
     	  for (int k = 0 ; k < numberOfBiopsies ; k ++ ) {
     	    	String biopsyLabel = k+1 + "" ;
     	    	mcFileNameA_D1 = "mcA"+biopsyLabel+"_D1.txt" ;
-    	      PrintStream output = new PrintStream(new FileOutputStream(mcFileNameA_D1)) ;
+    	      PrintStream output = new PrintStream(new FileOutputStream(modelDirectory + "/" + mcFileNameA_D1)) ;
     	      int overall = totalNum + numberOfPrevalenceLevels*4 ; // need to change
     	      output.println (overall+"") ; 
     	      int counter = 0 ;
@@ -343,7 +346,7 @@ public class generatingGausianMeansAL5Copies {
     	  for (int k = 0 ; k < numberOfBiopsies ; k ++ ) {
     	    	String biopsyLabel = k+1 + "" ;
     	    	mixtureFileNameA_D1 = "mixtureA"+biopsyLabel+"_D1.txt" ;
-    	      PrintStream output = new PrintStream(new FileOutputStream(mixtureFileNameA_D1)) ;
+    	      PrintStream output = new PrintStream(new FileOutputStream(modelDirectory + "/" + mixtureFileNameA_D1)) ;
     	      output.println (totalNum+"") ;
             for (int i = 0 ; i < totalNum-numberOfPrevalenceLevels*8 ; i ++ ) {
                 output.println (i + " 1 mixtureA"+biopsyLabel+"_D1_"+i+" 1 unityDPMF gcA"+biopsyLabel+"_D1_" + i) ;
@@ -374,7 +377,7 @@ public class generatingGausianMeansAL5Copies {
     	  for (int k = 0 ; k < numberOfBiopsies ; k ++ ) {
     	    	String biopsyLabel = k+1 + "" ;
     	    	collectionFileNameA_D1 = "collectionA"+biopsyLabel+"_D1.txt" ;
-    	      PrintStream output = new PrintStream(new FileOutputStream(collectionFileNameA_D1)) ;
+    	      PrintStream output = new PrintStream(new FileOutputStream(modelDirectory + "/" + collectionFileNameA_D1)) ;
     	      output.println ("1             ") ;
     	      output.println ("0             ") ;
     	      output.println ("pA"+biopsyLabel+"_given_G_P_D1") ;
@@ -390,7 +393,7 @@ public class generatingGausianMeansAL5Copies {
     	  for (int k = 0 ; k < numberOfBiopsies ; k ++ ) {
     	    	String biopsyLabel = k+1 + "" ;
     	    	gaussianMeanFileNameL = "meansL"+biopsyLabel+".txt" ;
-            PrintStream output = new PrintStream(new FileOutputStream(gaussianMeanFileNameL)) ;
+            PrintStream output = new PrintStream(new FileOutputStream(modelDirectory + "/" + gaussianMeanFileNameL)) ;
             output.println (totalNum+"") ;
             int counter = 0 ;
     	      for (int i = 0 ; i < numberOfPrevalenceLevels ; i ++ ) {
@@ -471,7 +474,7 @@ public class generatingGausianMeansAL5Copies {
     	  for (int k = 0 ; k < numberOfBiopsies ; k ++ ) {
     	    	String biopsyLabel = k+1 + "" ;
     	    	mcFileNameL = "mcL"+biopsyLabel+".txt" ;
-    	      PrintStream output = new PrintStream(new FileOutputStream(mcFileNameL)) ;
+    	      PrintStream output = new PrintStream(new FileOutputStream(modelDirectory + "/" + mcFileNameL)) ;
     	      output.println (totalNum+"") ;
             for (int i = 0 ; i < totalNum ; i ++ ) {
                 output.println (i + " 1 0 gcL"+biopsyLabel+"_" + i + " meanL"+biopsyLabel+"_" +i + " covarL"+biopsyLabel+"") ;
@@ -484,7 +487,7 @@ public class generatingGausianMeansAL5Copies {
     	  for (int k = 0 ; k < numberOfBiopsies ; k ++ ) {
     	    	String biopsyLabel = k+1 + "" ;
     	    	mixtureFileNameL = "mixtureL"+biopsyLabel+".txt" ;
-    	      PrintStream output = new PrintStream(new FileOutputStream(mixtureFileNameL)) ;
+    	      PrintStream output = new PrintStream(new FileOutputStream(modelDirectory + "/" + mixtureFileNameL)) ;
     	      output.println (totalNum+"") ;
             for (int i = 0 ; i < totalNum ; i ++ ) {
                 output.println (i + " 1 mixtureL"+biopsyLabel+"_"+i+" 1 unityDPMF gcL"+biopsyLabel+"_" + i) ;
@@ -497,7 +500,7 @@ public class generatingGausianMeansAL5Copies {
     	  for (int k = 0 ; k < numberOfBiopsies ; k ++ ) {
     	    	String biopsyLabel = k+1 + "" ;
     	    	collectionFileNameL = "collectionL"+biopsyLabel+".txt" ;
-    	      PrintStream output = new PrintStream(new FileOutputStream(collectionFileNameL)) ;
+    	      PrintStream output = new PrintStream(new FileOutputStream(modelDirectory + "/" + collectionFileNameL)) ;
     	      output.println ("1             ") ;
     	      output.println ("0             ") ;
     	      output.println ("pL"+biopsyLabel+"_given_G_P") ;
@@ -510,22 +513,22 @@ public class generatingGausianMeansAL5Copies {
     }
         
     public static void main(String args[]) throws java.io.IOException {    	  
-        if (args.length != 5 ) {
-            System.err.println("Usage:  java generatingGausianMeansAL5Copies numberOfGenotypes numberOfPrevalenceLevels precision numberOfBiopsies c_parameter_1-...-c_parameter_m"); 
+        if (args.length != 6 ) {
+            System.err.println("Usage:  java generatingGausianMeansAL5Copies dir numberOfGenotypes numberOfPrevalenceLevels precision numberOfBiopsies c_parameter_1-...-c_parameter_m"); 
             System.exit(-1); 
         }
-        Integer numberOfGenotypesInt = new Integer (args[0]) ;
-        Integer numberOfPrevalenceLevelsInt = new Integer (args[1]) ;
-        Double  precisionDou = new Double (args[2]) ;
-        Integer numberOfBiopsiesInt = new Integer (args[3]) ;
+        Integer numberOfGenotypesInt = new Integer (args[1]) ;
+        Integer numberOfPrevalenceLevelsInt = new Integer (args[2]) ;
+        Double  precisionDou = new Double (args[3]) ;
+        Integer numberOfBiopsiesInt = new Integer (args[4]) ;
         int nob = numberOfBiopsiesInt.intValue () ;
-        String [] tokens = args[4].split("~", -1) ;
+        String [] tokens = args[5].split("~", -1) ;
         double [] cs = new double [nob] ;
         for (int i = 0 ; i < nob ; i ++ ) {
             Double cDou = new Double (tokens[i]) ;
             cs [i] = cDou.doubleValue () ;
         }
-        generatingGausianMeansAL5Copies my = new generatingGausianMeansAL5Copies (numberOfGenotypesInt.intValue (), numberOfPrevalenceLevelsInt.intValue (), precisionDou.doubleValue (), nob, cs) ;
+        generatingGausianMeansAL5Copies my = new generatingGausianMeansAL5Copies (args[0], numberOfGenotypesInt.intValue (), numberOfPrevalenceLevelsInt.intValue (), precisionDou.doubleValue (), nob, cs) ;
         my.generatingGaussianMeanFileA_D0 () ;
         my.generatingMCFileA_D0 () ;
         my.generatingMixtureFileA_D0 () ;

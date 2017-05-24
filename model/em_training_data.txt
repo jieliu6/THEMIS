@@ -1,3 +1,0 @@
-/net/noble/vol1/home/liu6/extendSpace/proj/2015itomic/data/itomic/subject1/fromJavaCodeProcessDataForGMTK/trainWithLogSiteDistance_01-1-B2_01-2-B2_01-4-B3_mediumUpdatedModel4.txt
-
-

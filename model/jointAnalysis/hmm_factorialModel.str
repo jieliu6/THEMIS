@@ -62,9 +62,9 @@ conditionalparents : G(0),P1_2(0) using mixture collection("pA1_given_G_P_D0") m
                    | nil using mixture ("mixtureA1_D0_0_noCNAs")
                    | G(0),P1_2(0) using mixture collection("pA1_given_G_P_D1") mapping("dtA_given_G_P")
                    | G(0),P1_1(0) using mixture collection("pA1_given_G_P_D1") mapping("dtA_given_G_P")
-                   | nil using mixture ("internal:ZeroScore") 
-                   | nil using mixture ("internal:ZeroScore") 
-                   | nil using mixture ("internal:ZeroScore");
+                   | nil using mixture ("mixtureA1_D1_0_noCNAs") 
+                   | nil using mixture ("mixtureA1_D1_0_noCNAs") 
+                   | nil using mixture ("mixtureA1_D1_0_noCNAs");
   }
 
 variable : L1 {
@@ -88,7 +88,7 @@ conditionalparents : G(0),P2_2(0) using mixture collection("pA2_given_G_P_D0") m
                    | G(0),P2_2(0) using mixture collection("pA2_given_G_P_D1") mapping("dtA_given_G_P")
                    | G(0),P2_1(0) using mixture collection("pA2_given_G_P_D1") mapping("dtA_given_G_P")
                    | G(0),P2_1(0) using mixture collection("pA2_given_G_P_D1") mapping("dtA_given_G_P")
-                   | nil using mixture ("internal:ZeroScore")
+                   | nil using mixture ("mixtureA2_D1_0_noCNAs")
                    | G(0),P2_1(0) using mixture collection("pA2_given_G_P_D1") mapping("dtA_given_G_P");
   }
 
@@ -112,7 +112,7 @@ conditionalparents : G(0),P3_2(0) using mixture collection("pA3_given_G_P_D0") m
                    | G(0),P3_1(0) using mixture collection("pA3_given_G_P_D0") mapping("dtA_given_G_P")
                    | G(0),P3_2(0) using mixture collection("pA3_given_G_P_D1") mapping("dtA_given_G_P")
                    | G(0),P3_1(0) using mixture collection("pA3_given_G_P_D1") mapping("dtA_given_G_P")
-                   | nil using mixture ("internal:ZeroScore") 
+                   | nil using mixture ("mixtureA3_D1_0_noCNAs") 
                    | G(0),P3_1(0) using mixture collection("pA3_given_G_P_D1") mapping("dtA_given_G_P")
                    | G(0),P3_1(0) using mixture collection("pA3_given_G_P_D1") mapping("dtA_given_G_P");
   }
@@ -279,9 +279,9 @@ conditionalparents : G(0),P1_2(0) using mixture collection("pA1_given_G_P_D0") m
                    | nil using mixture ("mixtureA1_D0_0_noCNAs")
                    | G(0),P1_2(0) using mixture collection("pA1_given_G_P_D1") mapping("dtA_given_G_P")
                    | G(0),P1_1(0) using mixture collection("pA1_given_G_P_D1") mapping("dtA_given_G_P")
-                   | nil using mixture ("internal:ZeroScore") 
-                   | nil using mixture ("internal:ZeroScore") 
-                   | nil using mixture ("internal:ZeroScore");
+                   | nil using mixture ("mixtureA1_D1_0_noCNAs") 
+                   | nil using mixture ("mixtureA1_D1_0_noCNAs") 
+                   | nil using mixture ("mixtureA1_D1_0_noCNAs");
   }
 
 variable : L1 {
@@ -305,7 +305,7 @@ conditionalparents : G(0),P2_2(0) using mixture collection("pA2_given_G_P_D0") m
                    | G(0),P2_2(0) using mixture collection("pA2_given_G_P_D1") mapping("dtA_given_G_P")
                    | G(0),P2_1(0) using mixture collection("pA2_given_G_P_D1") mapping("dtA_given_G_P")
                    | G(0),P2_1(0) using mixture collection("pA2_given_G_P_D1") mapping("dtA_given_G_P")
-                   | nil using mixture ("internal:ZeroScore")
+                   | nil using mixture ("mixtureA2_D1_0_noCNAs")
                    | G(0),P2_1(0) using mixture collection("pA2_given_G_P_D1") mapping("dtA_given_G_P");
   }
 
@@ -329,7 +329,7 @@ conditionalparents : G(0),P3_2(0) using mixture collection("pA3_given_G_P_D0") m
                    | G(0),P3_1(0) using mixture collection("pA3_given_G_P_D0") mapping("dtA_given_G_P")
                    | G(0),P3_2(0) using mixture collection("pA3_given_G_P_D1") mapping("dtA_given_G_P")
                    | G(0),P3_1(0) using mixture collection("pA3_given_G_P_D1") mapping("dtA_given_G_P")
-                   | nil using mixture ("internal:ZeroScore") 
+                   | nil using mixture ("mixtureA3_D1_0_noCNAs") 
                    | G(0),P3_1(0) using mixture collection("pA3_given_G_P_D1") mapping("dtA_given_G_P")
                    | G(0),P3_1(0) using mixture collection("pA3_given_G_P_D1") mapping("dtA_given_G_P");
   }

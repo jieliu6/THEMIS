@@ -1,6 +1,7 @@
 %DENSECPT pX
 %DENSECPT pO_given_X
 MEAN *
+COVAR covarA_D1_noEvent
 DENSECPT pG_uni
 DENSECPT pZ_uni
 % DPMF *

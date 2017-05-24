@@ -10,55 +10,35 @@ import java.io.*;
 */
 
 public class updateOffDiagonalElementsForEMUntieVariances {
-	  private String inputDirectoryName ;
-	  private String outputDirectoryName ;
-	  private String inputSiteInfoFileName ;
 	  private String inputDataFileName ;
 	  private String outputFileName ;
 	  private String tempParameterFileName ;
-	  private String informationFileName ;
 	  
-	  private String [] tags ;
-	  
-	  private int numberOfSites ;
+    private int biopsyNum ;
+    private int cloneNum ;
+    private int gNum = 12 ; // default to be 12, corresponding to 12 genotypes
+    private int zNum ;
+    private int [] prevalenceLevels ;
+    private double [] g_var_est ;
+    private double [] z_var_est ;
+    
+    private int numberOfSites ;
     private String [] chr ;
     private int [] bp ;
-    
-    private int gNum = 12 ;
-    private int zNum = 5 ;
-    private double [] g_var_est = new double [gNum] ;
-    private double [] z_var_est = new double [zNum] ;
-    private int biopsyNum ;
-    private int cloneNumInBiopsy ;
-    private int [][] prevalenceLevels ;
-        
-    public updateOffDiagonalElementsForEMUntieVariances (String subjectID, int experimentIndex, int biopsyNumInput, int cloneNumInBiopsyinput, int [][] prevLevels) throws java.io.IOException {
-    	  tempParameterFileName = "/net/noble/vol1/home/liu6/extendSpace/proj/2015itomic/src/GMTK/gaussianDistanceModels/multiBiopsiesJointAnalysis/mediumUpdatedModel"+experimentIndex+"/em_covar.txt" ;
-    	  inputDirectoryName = "/net/noble/vol1/home/liu6/extendSpace/proj/2015itomic/data/itomic/"+subjectID+"/bams/" ;
-    	  outputDirectoryName = "/net/noble/vol1/home/liu6/extendSpace/proj/2015itomic/data/itomic/"+subjectID+"/fromJavaCodeProcessDataForGMTK/" ;
-    	  informationFileName = "/net/noble/vol1/home/liu6/extendSpace/proj/2015itomic/data/itomic/informationFile_"+subjectID+".txt" ;
-    	  RandomAccessFile accessFile = new RandomAccessFile (informationFileName, "r") ;        
-        for (int i = 0 ; i < 6 ; i ++ ) {
-            accessFile.readLine () ;
-        }        
-        String currentLine = accessFile.readLine () ;
-        String numBiopsiesStr = currentLine.substring (18) ; 
-        Integer numBiopsiesInt = new Integer (numBiopsiesStr) ;
-        biopsyNum = numBiopsiesInt.intValue () ;
-        tags = new String [biopsyNum] ;
-        for (int i = 0 ; i < biopsyNum ; i ++ ) {
-            tags [i] = accessFile.readLine () ;
-        }
-        accessFile.close () ;        
-    	  inputDataFileName = inputDirectoryName + "combinedData_01-1-B2_01-2-B2_01-4-B3.txt" ;
-    	  outputFileName = outputDirectoryName + "trainWithLogSiteDistance_01-1-B2_01-2-B2_01-4-B3_mediumUpdatedModel"+experimentIndex+".txt" ;
+            
+    public updateOffDiagonalElementsForEMUntieVariances (String tempf, String dataf, String outf, int biopsyNumInput, int cloneNumInput, int genotypeNumInput, int zNumInput, int [] prevLevels) throws java.io.IOException {
+    	  tempParameterFileName = tempf ;
+    	  inputDataFileName = dataf ;
+    	  outputFileName = outf ;
     	  biopsyNum = biopsyNumInput ;
-    	  cloneNumInBiopsy = cloneNumInBiopsyinput ;
-    	  prevalenceLevels = new int [biopsyNum][cloneNumInBiopsy] ;
-    	  for (int i = 0 ; i < biopsyNum ; i ++) {
-    	      for (int j = 0 ; j < cloneNumInBiopsy ; j ++ ) { 
-    	          prevalenceLevels [i][j] = prevLevels [i][j] ;
-    	      }
+    	  cloneNum = cloneNumInput ;
+    	  gNum = genotypeNumInput ;
+    	  zNum = zNumInput ;
+    	  prevalenceLevels = new int [cloneNum] ;
+    	  g_var_est = new double [gNum] ;
+        z_var_est = new double [zNum] ;
+    	  for (int i = 0 ; i < cloneNum ; i ++) {
+    	      prevalenceLevels [i] = prevLevels [i] ;
     	  }
     }
         
@@ -119,37 +99,33 @@ public class updateOffDiagonalElementsForEMUntieVariances {
         	  double [] peakDensityZ = new double [zNum] ; 
         	  for (int j = 0 ; j < gNum ; j ++ ) {
         	      peakDensityG [j] = getPeakNormDensity (g_var_est[j]) ;
-        	      // peakDensityG [j] = getPeakNormDensity (1.0) ;
         	      output.print (" " + Math.log(((gNum-1)*1.0)/(gNum*peakDensityG [j]*1.0))) ;
         	  }
         	  for (int j = 0 ; j < zNum ; j ++ ) {
         	      peakDensityZ [j] = getPeakNormDensity (z_var_est[j]) ;
-        	      // peakDensityZ [j] = getPeakNormDensity (1.0) ;
         	      output.print (" " + Math.log(((zNum-1)*1.0)/(zNum*peakDensityZ [j]*1.0))) ;
         	  }
         	  
             for (int j = 0 ; j < gNum ; j ++ ) {
-                // double x = Math.log(distance)/(Math.sqrt(g_var_est[j])) ;
                 double rho_g = (getNormalPDF(Math.log(distance), 0.0, g_var_est [j])/peakDensityG [j])*((gNum-1)*1.0/gNum*1.0) + 1.0/(gNum*1.0) ;
                 double OffDiagonalG = (1.0-rho_g)/(gNum*1.0-1.0) ;
         	      output.print (" "+OffDiagonalG) ;
         	  }
         	  for (int j = 0 ; j < zNum ; j ++ ) {
-                // double x = Math.log(distance)/(Math.sqrt(z_var_est[j])) ;
                 double rho_z = (getNormalPDF(Math.log(distance), 0.0, z_var_est [j])/peakDensityZ [j])*((zNum-1)*1.0/zNum*1.0) + 1.0/(zNum*1.0) ;
                 double OffDiagonalZ = (1.0-rho_z)/(zNum*1.0-1.0) ;
         	      output.print (" "+OffDiagonalZ) ;
         	  }
-        	  output.print (" "+ tokens [2] + " " + tokens [3] + " " + tokens [4] + " " + tokens [5] + " " + tokens [6] + " " + tokens [7] + " " + tokens [8]) ;
+        	  for (int j = 0 ; j < biopsyNum*2+1 ; j++) {
+        	      output.print (" "+ tokens [j+2]) ;
+        	  }
         	  if (currentChr.equals(previousChr)) {
         	      output.print (" 1") ;
         	  } else {
         	      output.print (" 0") ;
         	  }
-        	  for (int k = 0 ; k < biopsyNum ; k ++) {
-    	          for (int j = 0 ; j < cloneNumInBiopsy ; j ++ ) { 
-    	              output.print (" " + prevalenceLevels [k][j]) ;
-    	          }
+        	  for (int k = 0 ; k < cloneNum ; k ++) {
+    	          output.print (" " + prevalenceLevels [k]) ;
     	      }
     	      output.println () ;
         	  previousChr = currentChr ;
@@ -157,13 +133,7 @@ public class updateOffDiagonalElementsForEMUntieVariances {
         }
         output.close () ;
     }
-    
-    public double getStdNormalPDF (double x) {
-        double pdf = 0.0 ;
-        pdf = (1.0/(Math.sqrt(2*Math.PI)))*Math.pow(Math.E, (-(x)*(x))/(2.0)) ;
-        return pdf ;
-    }
-    
+        
     public double getNormalPDF (double x, double mu, double sigma2) {
         double pdf = 0.0 ;
         pdf = (1.0/(Math.sqrt(2*Math.PI*sigma2)))*Math.pow(Math.E, (-(x-mu)*(x-mu))/(2.0*sigma2)) ;
@@ -177,24 +147,21 @@ public class updateOffDiagonalElementsForEMUntieVariances {
     }
     
     public static void main(String args[]) throws java.io.IOException {    	  
-        if (args.length != 5) {
-            System.err.println("Usage:  java updateOffDiagonalElementsForEMUntieVariances subjectID biopsyIndex1 experimentIndex biopsyNum subcloneNum prevalences"); 
+        if (args.length != 8) {
+            System.err.println("Usage:  java updateOffDiagonalElementsForEMUntieVariances tempParaFileName dataFileName tempDataFileName biopsyNum subcloneNum genotypeNum zNum prevalences"); 
             System.exit(-1); 
         }
-        Integer expIndexInt = new Integer (args[1]) ;
-        Integer biopsyNumInt = new Integer (args[2]) ;
-        Integer cloneNumInt = new Integer (args[3]) ;
-        String [] tokens = args[4].split("~", -1) ;
-        int [][] ps = new int [biopsyNumInt.intValue()][cloneNumInt.intValue()] ;
-        int indexTag = 0 ;
-        for (int k = 0 ; k < biopsyNumInt.intValue() ; k ++) {
-    	      for (int j = 0 ; j < cloneNumInt.intValue() ; j ++ ) { 
-                Integer pInt = new Integer (tokens[indexTag]) ;
-                ps [k][j] = pInt.intValue () ;
-                indexTag ++ ;
-            }
+        Integer biopsyNumInt = new Integer (args [3]) ;
+        Integer cloneNumInt = new Integer (args [4]) ;
+        Integer genotypeNumInt = new Integer (args [5]) ;
+        Integer zNumInt = new Integer (args [6]) ;
+        String [] tokens = args [7].split("~", -1) ;
+        int [] ps = new int [cloneNumInt.intValue()] ;
+        for (int k = 0 ; k < cloneNumInt.intValue() ; k ++) {
+            Integer pInt = new Integer (tokens[k]) ;
+            ps [k] = pInt.intValue () ;
         }
-        updateOffDiagonalElementsForEMUntieVariances my = new updateOffDiagonalElementsForEMUntieVariances (args[0], expIndexInt.intValue(), biopsyNumInt.intValue(), cloneNumInt.intValue(), ps) ;
+        updateOffDiagonalElementsForEMUntieVariances my = new updateOffDiagonalElementsForEMUntieVariances (args[0], args[1], args[2], biopsyNumInt.intValue(), cloneNumInt.intValue(), genotypeNumInt.intValue(), zNumInt.intValue(), ps) ;
         my.getCurrentEstimatedParameters () ;
         my.readInPositionInfo () ;
         my.printDataFiles () ;
