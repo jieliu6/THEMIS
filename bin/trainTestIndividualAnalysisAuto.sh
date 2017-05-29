@@ -13,6 +13,14 @@ case $key in
     GMTKPATH="$2"
     shift # past argument
     ;;
+    -sd|--sourceDir)
+    SOURCEDIR="$2"
+    shift # past argument
+    ;;
+    -md|--modelDir)
+    MODELDIR="$2"
+    shift # past argument
+    ;;
     -trf|--trainFile)
     TRAIN="$2"
     shift # past argument
@@ -29,28 +37,12 @@ case $key in
     TEMPDATAFILE="$2"
     shift # past argument
     ;;
-    -sd|--sourceDir)
-    SOURCEDIR="$2"
-    shift # past argument
-    ;;
-    -md|--modelDir)
-    MODELDIR="$2"
-    shift # past argument
-    ;;
-    -nf|--numFloats)
-    NUMFLOATS="$2"
-    shift # past argument
-    ;;
-    -ni|--numInts)
-    NUMINTS="$2"
-    shift # past argument
-    ;;
     -bn|--biopsyNum)
     BIOPSYNUM="$2"
     shift # past argument
     ;;
-    -cn|--cloneNum)
-    CLONENUM="$2"
+    -bi|--indexOfBiopsy)
+    INDEXB="$2"
     shift # past argument
     ;;
     -gn|--genotypeNum)
@@ -67,10 +59,6 @@ case $key in
     ;;
     -pl|--prevalenceLevel)
     PREVALENCELEVEL="$2"
-    shift # past argument
-    ;;
-    -ps|--prevalenceLevelsInferred)
-    PREVALENCELEVELSINFERRED="$2"
     shift # past argument
     ;;
     -c|--cValue)
@@ -102,6 +90,10 @@ case $key in
 esac
 shift # past argument or value
 done
+
+let NUMINTS=2
+let NUMFLOATS=$GENOTYPENUM+$GENOTYPENUM+$ZNUM+$ZNUM+3
+
 echo GMTK PATH  = "${GMTKPATH}"
 echo SOURCE CODE DIRECTORY  = "${SOURCEDIR}"
 echo MODEL DIRECTORY  = "${MODELDIR}"
@@ -112,31 +104,34 @@ echo TEMP DATA FILE     = "${TEMPDATAFILE}"
 echo NUM OF FLOATS    = "${NUMFLOATS}"
 echo NUM OF INTS    = "${NUMINTS}"
 echo BIOPSY NUMBER    = "${BIOPSYNUM}"
-echo CLONE NUMBER    = "${CLONENUM}"
+echo BIOPSY INDEX    = "${INDEXB}"
 echo GENOTYPE NUMBER    = "${GENOTYPENUM}"
 echo Z CARDINALITY    = "${ZNUM}"
 echo PREVALENCE LEVEL NUMBER    = "${PREVALENCELEVELNUM}"
 echo PREVALENCE LEVEL    = "${PREVALENCELEVEL}"
-echo PREVALENCE LEVEL INFERRED   = "${PREVALENCELEVELSINFERRED}"
 echo C VALUE    = "${CVALUE}"
 echo TRANSITION G    = "${TRANSITIONG}"
 echo TRANSITION Z    = "${TRANSITIONZ}"
 echo LST VALUE    = "${LSTVALUE}"
 echo VERBOSITY    = "${VERBOSITY}"
 
+javac ${SOURCEDIR}/generatingGausianMeansAL5Copies.java
+javac ${SOURCEDIR}/updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis.java
+javac ${SOURCEDIR}/generatingModelSpecificationFilesIndividualAnalysis.java
+
+# generating model specification files
+java -cp ${SOURCEDIR} generatingModelSpecificationFilesIndividualAnalysis ${MODELDIR} ${ZNUM}
+
+# initialize Gaussians
+java -cp ${SOURCEDIR} generatingGausianMeansAL5Copies ${MODELDIR} $GENOTYPENUM $PREVALENCELEVELNUM $PREVALENCELEVEL 1 $CVALUE
+
+cd ${MODELDIR}
+
 rm -rf ${MODELDIR}/hmm_factorialModel.str.trifile
 ${GMTKPATH}/gmtkTriangulate -str ${MODELDIR}/hmm_factorialModel.str -inputM ${MODELDIR}/hmm_factorialModel.mtr $*
 
-javac ${SOURCEDIR}/generatingGausianMeansAL5Copies.java
-javac ${SOURCEDIR}/generatingGausianMeansAL5CopiesNoCNAs.java
-javac ${SOURCEDIR}/updateOffDiagonalElementsForEMUntieVariances.java
-
-# initialize Gaussians
-java -cp ${SOURCEDIR} generatingGausianMeansAL5Copies ${MODELDIR} $GENOTYPENUM $PREVALENCELEVELNUM $PREVALENCELEVEL $BIOPSYNUM $CVALUE
-java -cp ${SOURCEDIR} generatingGausianMeansAL5CopiesNoCNAs ${MODELDIR} $GENOTYPENUM $PREVALENCELEVELNUM $PREVALENCELEVEL $BIOPSYNUM $CVALUE
-
 maxiters=100
-thresh=0.000005
+thresh=0.000001
 
 # specify training data file name for GMTK
 echo "${TEMPDATAFILE}" > ${MODELDIR}/em_training_data.txt
@@ -166,11 +161,10 @@ function covars {
     grep -o 'covar_ggDiag9 1 .*$' $1 | grep -o '[[:digit:]]*\.[[:digit:]]*.*$' >> ${MODELDIR}/em_covar.txt
     grep -o 'covar_ggDiag10 1 .*$' $1 | grep -o '[[:digit:]]*\.[[:digit:]]*.*$' >> ${MODELDIR}/em_covar.txt
     grep -o 'covar_ggDiag11 1 .*$' $1 | grep -o '[[:digit:]]*\.[[:digit:]]*.*$' >> ${MODELDIR}/em_covar.txt
-    grep -o 'covar_zzDiag0 1 .*$' $1 | grep -o '[[:digit:]]*\.[[:digit:]]*.*$' >> ${MODELDIR}/em_covar.txt
-    grep -o 'covar_zzDiag1 1 .*$' $1 | grep -o '[[:digit:]]*\.[[:digit:]]*.*$' >> ${MODELDIR}/em_covar.txt
-    grep -o 'covar_zzDiag2 1 .*$' $1 | grep -o '[[:digit:]]*\.[[:digit:]]*.*$' >> ${MODELDIR}/em_covar.txt
-    grep -o 'covar_zzDiag3 1 .*$' $1 | grep -o '[[:digit:]]*\.[[:digit:]]*.*$' >> ${MODELDIR}/em_covar.txt
-    grep -o 'covar_zzDiag4 1 .*$' $1 | grep -o '[[:digit:]]*\.[[:digit:]]*.*$' >> ${MODELDIR}/em_covar.txt
+    for((ii=0; ii<$ZNUM; i++))
+    do
+    grep -o "covar_zzDiag${ii} 1 .*\$" $1 | grep -o '[[:digit:]]*\.[[:digit:]]*.*$' >> ${MODELDIR}/em_covar.txt
+    done
 }
 
 function test {
@@ -179,13 +173,13 @@ function test {
 # get covariances from the file
     covars $1
 
-java -cp ${SOURCEDIR} updateOffDiagonalElementsForEMUntieVariances ${MODELDIR}/em_covar.txt $ORIGINALDATAFILE $TEMPDATAFILE $BIOPSYNUM $CLONENUM $GENOTYPENUM $ZNUM $PREVALENCELEVELSINFERRED
-${GMTKPATH}/gmtkViterbi \
+    java -cp ${SOURCEDIR} updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis ${MODELDIR}/em_covar.txt $ORIGINALDATAFILE $TEMPDATAFILE $GENOTYPENUM $ZNUM $BIOPSYNUM $INDEXB
+ ${GMTKPATH}/gmtkViterbi \
 	-strFile ${MODELDIR}/hmm_factorialModel.str \
 	-triFile ${MODELDIR}/hmm_factorialModel.str.trifile \
 	-inputMasterFile ${MODELDIR}/train_hmm_factorialModel.mtr \
 	-inputTrainableParameters $1 \
-	-of1 ${MODELDIR}/${TEST} -fmt1 ascii -nf1 $NUMFLOATS -ni1 $NUMINTS \
+	-of1 ${MODELDIR}/${TEST} -fmt1 ascii -nf1 $NUMFLOATS -ni1 $NUMINTS  \
 	-island T -lst $LSTVALUE \
 	-verb $VERBOSITY -vitValsFile $ALIGN
 
@@ -193,38 +187,41 @@ ${GMTKPATH}/gmtkViterbi \
 
 function train {
     INITPARAMS="${MODELDIR}/init_hmm_factorialModel.params"
+
+    java -cp ${SOURCEDIR} updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis ${MODELDIR}/em_covar.txt $ORIGINALDATAFILE $TEMPDATAFILE $GENOTYPENUM $ZNUM $BIOPSYNUM $INDEXB
+############################ take first step
+    PARAMS="${MODELDIR}/trained_factorialModel_0.params"
+    STRFILE="${MODELDIR}/hmm_factorialModel.str"
+    TRIFILE="${MODELDIR}/hmm_factorialModel.str.trifile"
+    NOTRAINFILE="${MODELDIR}/params.notrain"
     ERRORFILE="${MODELDIR}/err.txt"
     CURRFILE="${MODELDIR}/curr.txt"
-
-java -cp ${SOURCEDIR} updateOffDiagonalElementsForEMUntieVariances ${MODELDIR}/em_covar.txt $ORIGINALDATAFILE $TEMPDATAFILE $BIOPSYNUM $CLONENUM $GENOTYPENUM $ZNUM $PREVALENCELEVELSINFERRED
-# take first step
-    PARAMS="${MODELDIR}/trained_factorialModel_0.params"
-${GMTKPATH}/gmtkEMtrain \
-    	-strFile ${MODELDIR}/hmm_factorialModel.str \
-    	-triFile ${MODELDIR}/hmm_factorialModel.str.trifile \
+    ${GMTKPATH}/gmtkEMtrain \
+    	-strFile ${STRFILE} \
+    	-triFile ${TRIFILE} \
     	-inputMasterFile ${MODELDIR}/hmm_factorialModel.mtr \
     	-inputTrainableParameters $INITPARAMS \
     	-outputTrainableParameters $PARAMS \
-    	-of1 ${MODELDIR}/$TRAIN -fmt1 ascii -nf1 $NUMFLOATS -ni1 $NUMINTS -dirichletPriors T \
-    	-maxE 1 -lldp $thresh -objsNotToTrain ${MODELDIR}/params.notrain -random T \
+    	-of1 ${MODELDIR}/${TRAIN} -fmt1 ascii -nf1 $NUMFLOATS -ni1 $NUMINTS -dirichletPriors T \
+    	-maxE 1 -lldp $thresh -objsNotToTrain $NOTRAINFILE -random T \
     	-allocateDenseCpts 2 \
-    	-island T -lst $LSTVALUE -verb $VERBOSITY \
+    	-island T -lst $LSTVALUE \
+    	-verb $VERBOSITY \
     	-llStoreFile ${MODELDIR}/ll_iter0.txt \
     	2> $ERRORFILE 1>$CURRFILE
+
 
     currLL=$(cat ${MODELDIR}/ll_iter0.txt)
     prevLL="${MODELDIR}/ll_iter0.txt"
     echo "Iteration 0, log-likelihood $currLL"
 
 ########### produce data given first iteration
-java -cp ${SOURCEDIR} updateOffDiagonalElementsForEMUntieVariances ${MODELDIR}/em_covar.txt $ORIGINALDATAFILE $TEMPDATAFILE $BIOPSYNUM $CLONENUM $GENOTYPENUM $ZNUM $PREVALENCELEVELSINFERRED
+    java -cp ${SOURCEDIR} updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis ${MODELDIR}/em_covar.txt $ORIGINALDATAFILE $TEMPDATAFILE $GENOTYPENUM $ZNUM $BIOPSYNUM  $INDEXB
     covars $PARAMS
     INITPARAMS=$PARAMS
-
     # create master file for iterations > 0, where 
     # we avoid double defining the Gaussian means, covariances, and components
     grep -v 'COVAR_IN_FILE\|DPMF_IN_FILE\|MEAN_IN_FILE\|MC_IN_FILE\|MX_IN_FILE' ${MODELDIR}/hmm_factorialModel.mtr > ${MODELDIR}/train_hmm_factorialModel.mtr
-
 
 ######################## iteratre til convergence
     for((i=1; i<$maxiters; i++))
@@ -233,16 +230,17 @@ java -cp ${SOURCEDIR} updateOffDiagonalElementsForEMUntieVariances ${MODELDIR}/e
 	PARAMS="${MODELDIR}/trained_factorialModel_${i}.params"
 
 	echo "$INITPARAMS $PARAMS"
-${GMTKPATH}/gmtkEMtrain \
+	$GMTKPATH/gmtkEMtrain \
 	    -strFile ${MODELDIR}/hmm_factorialModel.str \
 	    -triFile ${MODELDIR}/hmm_factorialModel.str.trifile \
 	    -inputMasterFile ${MODELDIR}/train_hmm_factorialModel.mtr \
 	    -inputTrainableParameters $INITPARAMS \
 	    -outputTrainableParameters $PARAMS \
-	    -of1 ${MODELDIR}/$TRAIN -fmt1 ascii -nf1 $NUMFLOATS -ni1 $NUMINTS -dirichletPriors T \
+	    -of1 ${MODELDIR}/${TRAIN} -fmt1 ascii -nf1 $NUMFLOATS -ni1 $NUMINTS -dirichletPriors T \
 	    -maxE 1 -lldp $thresh -objsNotToTrain ${MODELDIR}/params.notrain \
 	    -llStoreFile ${MODELDIR}/ll_iter${i}.txt \
-	    -island T -lst $LSTVALUE -verb $VERBOSITY \
+    	-island T -lst $LSTVALUE \
+    	-verb $VERBOSITY \
 	    2> $ERRORFILE 1>$CURRFILE
 
 	currLL=$(cat ${MODELDIR}/ll_iter${i}.txt)
@@ -261,13 +259,14 @@ ${GMTKPATH}/gmtkEMtrain \
 	if (($converged))
 	then
 	    echo "Converged after $i iterations"
+
 	    echo "Testing using trained parameters"
 	    test $PARAMS
 	    break
 	fi
 
 ########### produce data given most recent iteration
-java -cp ${SOURCEDIR} updateOffDiagonalElementsForEMUntieVariances ${MODELDIR}/em_covar.txt $ORIGINALDATAFILE $TEMPDATAFILE $BIOPSYNUM $CLONENUM $GENOTYPENUM $ZNUM $PREVALENCELEVELSINFERRED
+	java -cp ${SOURCEDIR} updateOffDiagonalElementsForEMUntieVariancesIndividualAnalysis ${MODELDIR}/em_covar.txt $ORIGINALDATAFILE $TEMPDATAFILE $GENOTYPENUM $ZNUM $BIOPSYNUM $INDEXB
 	prevLL="${MODELDIR}/ll_iter${i}.txt"
     done
 }
